@@ -24,3 +24,27 @@ textarea {
 .mat-mdc-card {
   --mdc-elevated-card-container-elevation: none;
 }
+
+.historical-date-panel {
+  margin-top: 0.45rem;
+}
+
+.historical-date-panel .mat-datepicker-content {
+  border: 1px solid rgba(151, 161, 179, 0.28);
+  border-radius: 0.5rem;
+  box-shadow: 0 1.25rem 3rem rgba(30, 45, 73, 0.18);
+  overflow: hidden;
+}
+
+.historical-date-panel .mat-calendar {
+  width: min(20rem, calc(100vw - 2rem));
+}
+
+.historical-date-panel .mat-calendar-header {
+  padding: 0.75rem 0.75rem 0;
+}
+
+.historical-date-panel .mat-calendar-body-selected {
+  background-color: #246b73;
+  color: #ffffff;
+}

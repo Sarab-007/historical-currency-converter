@@ -118,6 +118,20 @@ h1 {
   min-height: 3rem;
 }
 
+.date-field {
+  --mdc-outlined-text-field-focus-outline-color: #246b73;
+  --mdc-outlined-text-field-focus-label-text-color: #246b73;
+}
+
+.date-field ::ng-deep .mat-datepicker-toggle {
+  color: #246b73;
+}
+
+.date-field ::ng-deep .mat-datepicker-toggle button {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
 .retry-button {
   justify-self: start;
 }

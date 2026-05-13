@@ -86,11 +86,16 @@
               </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="span-2">
+            <mat-form-field appearance="outline" class="date-field span-2">
               <mat-label>Historical date</mat-label>
               <input formControlName="date" matInput [matDatepicker]="historicalDatePicker" [max]="today" />
               <mat-datepicker-toggle matIconSuffix [for]="historicalDatePicker" />
-              <mat-datepicker #historicalDatePicker />
+              <mat-datepicker
+                #historicalDatePicker
+                panelClass="historical-date-panel"
+                xPosition="end"
+                yPosition="below"
+              />
               <mat-error>Select today or a past date.</mat-error>
             </mat-form-field>
 
