@@ -4,6 +4,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,10 +32,12 @@ import { StatusMessageComponent } from '../../shared/ui/status-message/status-me
     LoadingSkeletonComponent,
     MatButtonModule,
     MatCardModule,
+    MatDatepickerModule,
     MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatNativeDateModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
@@ -42,6 +46,7 @@ import { StatusMessageComponent } from '../../shared/ui/status-message/status-me
     SelectOnFocusDirective,
     StatusMessageComponent,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './converter-page.component.html',
   styleUrl: './converter-page.component.scss',
 })
@@ -51,7 +56,7 @@ export class ConverterPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly historyService = inject(ConversionHistoryService);
 
-  protected readonly today = getTodayIsoDate();
+  protected readonly today = getTodayDate();
   protected readonly currencies = signal<CurrencyOption[]>([]);
   protected readonly conversion = signal<ConversionResult | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
@@ -88,7 +93,13 @@ export class ConverterPageComponent {
       return;
     }
 
-    const request = this.form.getRawValue() satisfies ConversionRequest;
+    const formValue = this.form.getRawValue();
+    const request: ConversionRequest = {
+      amount: formValue.amount,
+      date: formatIsoDate(formValue.date),
+      sourceCurrency: formValue.sourceCurrency,
+      targetCurrency: formValue.targetCurrency,
+    };
     this.errorMessage.set(null);
     this.isConverting.set(true);
 
@@ -159,8 +170,17 @@ export class ConverterPageComponent {
   }
 }
 
-function getTodayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
+function getTodayDate(): Date {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate());
+}
+
+function formatIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }
 
 function getErrorMessage(error: unknown): string {
