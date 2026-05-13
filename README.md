@@ -1,3 +1,9 @@
+---
+title: Historical Currency Converter API
+sdk: docker
+app_port: 7860
+---
+
 # Historical Currency Converter
 
 Production-style assessment project built with Angular 19, Angular Material, and NestJS.
