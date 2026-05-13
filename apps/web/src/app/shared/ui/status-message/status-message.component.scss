@@ -1,0 +1,23 @@
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #d8dee9;
+  border-radius: 0.5rem;
+  background: #f7f9fc;
+  color: #253142;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.status--error {
+  border-color: #f0c2c7;
+  background: #fff4f4;
+  color: #7a1f2b;
+}
+
+mat-icon {
+  flex: 0 0 auto;
+}

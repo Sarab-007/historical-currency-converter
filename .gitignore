@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+apps/*/node_modules/
+
+# Build output
+dist/
+apps/*/dist/
+.angular/
+coverage/
+apps/*/coverage/
+
+# Environment
+.env
+.env.*
+!.env.example
+apps/*/.env
+apps/*/.env.*
+!apps/*/.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

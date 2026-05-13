@@ -1,0 +1,185 @@
+<main class="page-shell">
+  <section class="page-header" aria-labelledby="page-title">
+    <div>
+      <p class="eyebrow">Exchange desk</p>
+      <h1 id="page-title">Historical Currency Converter</h1>
+    </div>
+
+    <div class="secure-pill" aria-label="API key protected by backend">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <span>Protected API</span>
+    </div>
+  </section>
+
+  <section class="content-grid">
+    <mat-card class="panel converter-panel">
+      @if (isLoadingCurrencies()) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
+      <mat-card-header>
+        <mat-card-title>Convert</mat-card-title>
+        <mat-card-subtitle>{{ sourceCurrencyLabel() }} to {{ targetCurrencyLabel() }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (isLoadingCurrencies()) {
+          <div class="skeleton-stack" aria-label="Loading currencies">
+            <app-loading-skeleton height="3.5rem" />
+            <app-loading-skeleton height="3.5rem" />
+            <app-loading-skeleton height="3.5rem" />
+            <app-loading-skeleton height="3.5rem" />
+          </div>
+        } @else {
+          <form class="converter-form" [formGroup]="form" (ngSubmit)="convert()">
+            <mat-form-field appearance="outline" class="span-2">
+              <mat-label>Amount</mat-label>
+              <input
+                appSelectOnFocus
+                formControlName="amount"
+                inputmode="decimal"
+                matInput
+                min="0.01"
+                step="0.01"
+                type="number"
+              />
+              <mat-error>Enter an amount greater than zero.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>From</mat-label>
+              <mat-select formControlName="sourceCurrency">
+                @for (currency of currencies(); track currency.code) {
+                  <mat-option [value]="currency.code">
+                    <span class="currency-option">
+                      <strong>{{ currency.code }}</strong>
+                      <span>{{ currency.name }}</span>
+                    </span>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <button
+              aria-label="Swap currencies"
+              class="swap-button"
+              mat-icon-button
+              matTooltip="Swap currencies"
+              type="button"
+              [disabled]="isConverting()"
+              (click)="swapCurrencies()"
+            >
+              <mat-icon aria-hidden="true">swap_horiz</mat-icon>
+            </button>
+
+            <mat-form-field appearance="outline">
+              <mat-label>To</mat-label>
+              <mat-select formControlName="targetCurrency">
+                @for (currency of currencies(); track currency.code) {
+                  <mat-option [value]="currency.code">
+                    <span class="currency-option">
+                      <strong>{{ currency.code }}</strong>
+                      <span>{{ currency.name }}</span>
+                    </span>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="span-2">
+              <mat-label>Historical date</mat-label>
+              <input formControlName="date" matInput type="date" [max]="today" />
+              <mat-error>Select today or a past date.</mat-error>
+            </mat-form-field>
+
+            <button
+              class="convert-button span-2"
+              color="primary"
+              mat-flat-button
+              type="submit"
+              [disabled]="form.invalid || isConverting() || !currencies().length"
+            >
+              @if (isConverting()) {
+                <mat-progress-spinner diameter="20" mode="indeterminate" />
+              }
+              <span>Convert</span>
+            </button>
+          </form>
+        }
+
+        @if (errorMessage(); as message) {
+          <app-status-message icon="error" tone="error" [title]="message" />
+
+          @if (!currencies().length) {
+            <button class="retry-button" mat-stroked-button type="button" (click)="retryCurrencies()">
+              <mat-icon aria-hidden="true">refresh</mat-icon>
+              <span>Retry</span>
+            </button>
+          }
+        }
+
+        @if (conversion(); as result) {
+          <section class="result-card" aria-live="polite">
+            <div>
+              <p class="result-label">{{ result.amount | number: '1.2-6' }} {{ result.sourceCurrency }}</p>
+              <strong>{{ result.convertedAmount | number: '1.2-2' }} {{ result.targetCurrency }}</strong>
+            </div>
+
+            <mat-divider />
+
+            <div class="rate-grid">
+              <span>Rate</span>
+              <strong>1 {{ result.sourceCurrency }} = {{ result.rate | number: '1.2-6' }} {{ result.targetCurrency }}</strong>
+              <span>Date</span>
+              <strong>{{ result.date | date: 'mediumDate' }}</strong>
+            </div>
+          </section>
+        } @else if (!isLoadingCurrencies()) {
+          <app-status-message icon="query_stats" title="No conversion yet" />
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="panel history-panel">
+      <mat-card-header>
+        <mat-card-title>History</mat-card-title>
+        <mat-card-subtitle>{{ history().length }} saved conversions</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (history().length) {
+          <div class="history-toolbar">
+            <button mat-button type="button" (click)="clearHistory()">
+              <mat-icon aria-hidden="true">delete_sweep</mat-icon>
+              <span>Clear</span>
+            </button>
+          </div>
+
+          <div class="history-list" aria-label="Conversion history">
+            @for (item of history(); track item.id) {
+              <article class="history-item">
+                <div>
+                  <p>{{ item.amount | number: '1.2-6' }} {{ item.sourceCurrency }}</p>
+                  <strong>{{ item.convertedAmount | number: '1.2-2' }} {{ item.targetCurrency }}</strong>
+                </div>
+
+                <dl>
+                  <div>
+                    <dt>Date</dt>
+                    <dd>{{ item.date | date: 'mediumDate' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Saved</dt>
+                    <dd>{{ item.timestamp | date: 'short' }}</dd>
+                  </div>
+                </dl>
+              </article>
+            }
+          </div>
+        } @else {
+          <app-status-message icon="history" title="History will appear after your first conversion" />
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+</main>

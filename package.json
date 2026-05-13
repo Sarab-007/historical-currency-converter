@@ -1,0 +1,15 @@
+{
+  "name": "historical-currency-converter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Angular 19 and NestJS historical currency converter assessment.",
+  "scripts": {
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "npm --prefix apps/api run build",
+    "build:web": "npm --prefix apps/web run build",
+    "start:api": "npm --prefix apps/api run start:dev",
+    "start:web": "npm --prefix apps/web run start",
+    "test:api": "npm --prefix apps/api run test",
+    "test:e2e": "npm --prefix apps/api run test:e2e"
+  }
+}

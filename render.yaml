@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: historical-currency-converter-api
+    env: node
+    rootDir: apps/api
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: FREECURRENCY_API_KEY
+        sync: false
+      - key: FREECURRENCY_API_URL
+        value: https://api.freecurrencyapi.com/v1
+      - key: CORS_ORIGIN
+        sync: false
